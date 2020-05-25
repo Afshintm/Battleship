@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using BattleShip.Api.Models;
 using BattleShip.Api.Services;
@@ -25,7 +26,18 @@ namespace BattleShip.Api.Controllers
         [Route("create/{dimensions?}")]
         public async Task<IActionResult> CreateAsync(int dimensions=10)
         {
-            return await Task.FromResult( Ok("Created"));
+            _gameTrackerService.CreateBoard(dimensions);
+            var response = await Task.FromResult(Created(new Uri("https://localhost:5071/board"), _gameTrackerService.GetGameStatus()));
+            return response;
+        }
+
+        [HttpPost]
+        [Route("ship")]
+        public async Task<IActionResult> Ship([FromBody]ShipViewModel ship)
+        {
+            var createdShip =_gameTrackerService.AddShip(ship);
+            var response = await Task.FromResult(Created(new Uri("https://localhost:5071/board"), createdShip));
+            return response;
         }
     }
 }

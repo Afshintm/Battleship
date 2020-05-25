@@ -10,7 +10,7 @@ namespace BattleShip.Api.Services
     public interface IGameTrackerService
     {
         void CreateBoard(int dimensions = 10);
-        void AddShip();
+        dynamic AddShip(ShipViewModel shipViewModel);
         GameStatus Status { get; set; }
         void SetStatus(GameStatus newStatus);
         dynamic GetGameStatus();
@@ -47,12 +47,20 @@ namespace BattleShip.Api.Services
             _status = GameStatus.Setup;
         }
 
-        public void AddShip()
+        public dynamic AddShip(ShipViewModel shipViewModel)
         {
-            throw new System.NotImplementedException();
+            if (!CanAddShip())
+                return null;
+            
+            return null;
         }
 
-       
+        private bool CanAddShip()
+        {
+            return false;
+        }
+
+
         public void SetStatus(GameStatus newStatus)
         {
             switch (newStatus)
