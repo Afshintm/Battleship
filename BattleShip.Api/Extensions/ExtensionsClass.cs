@@ -30,38 +30,7 @@ namespace BattleShip.Api.Extensions
             dynamic result = new ExpandoObject();
             result.alignment = ship.Alignment.ToString();
             result.length = ship.Length;
-            // result.startingPosition = new
-            // {
-            //     ship.StartingPosition.X, ship.StartingPosition.Y
-            // };
             return result;
-        }
-
-        public static List<BoardPosition> BuildShipFrom(this BoardPosition startingPosition,Guid Id ,int length, Alignment alignment)
-        {
-            var boardPositions = new List<BoardPosition>();
-            for (var i = 1; i < length; i++)
-            {
-                if (alignment == Alignment.Horizontal)
-                {
-                    boardPositions.Add(new BoardPosition
-                    {
-                        X= startingPosition.X+i,
-                        Y= startingPosition.Y,
-                        Value = Id
-                    });
-                }
-                else 
-                {
-                    boardPositions.Add(new BoardPosition
-                    {
-                        X= startingPosition.X,
-                        Y= startingPosition.Y+i,
-                        Value = Id
-                    });
-                }
-            }
-            return boardPositions;
         }
         
         public static List<BoardPosition> BuildShipFrom(this BoardPosition startingPosition,int length, Alignment alignment)
