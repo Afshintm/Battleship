@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using BattleShip.Api;
 using BattleShip.Api.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Battleship.Integration.Tests
@@ -16,9 +17,20 @@ namespace Battleship.Integration.Tests
         public const string ApplicationJson_ContentType = "application/json; charset=utf-8";
         public const string Create_Board_Url = "/board/create";
 
+        private readonly ShipViewModel _stubShipViewModel;
         public ApiTests(WebApplicationFactory<Startup> factory)
         {
             _factory = factory;
+            _stubShipViewModel = new ShipViewModel
+            {
+                Alignment = Alignment.Horizontal,
+                Length = 3,
+                StartingPosition = new BoardPosition
+                {
+                    X=3,
+                    Y=3
+                }
+            };
         }
         
         [Theory]
@@ -60,6 +72,27 @@ namespace Battleship.Integration.Tests
             var stringContent = new StringContent("" ,Encoding.UTF8,"application/json");
             var response = await client.PostAsync(Create_Board_Url, stringContent);
             return response;
+        }
+        
+        [Fact]
+        public async Task Create_Board_And_Add_Ship_Is_Successful()
+        {
+            var boardResponse =  await CreateBoard();
+            var response = await AddStubedShip();
+
+            // Assert
+            response.EnsureSuccessStatusCode(); 
+            Assert.Equal(ApplicationJson_ContentType, response.Content.Headers.ContentType.ToString());
+            var parsedResponse = await response.ParseResponse();
+            Assert.NotNull(parsedResponse.Response);
+        }
+
+        private async Task<HttpResponseMessage> AddStubedShip()
+        {
+            var client = _factory.CreateClient();
+            var jsonBody = JsonConvert.SerializeObject(_stubShipViewModel);
+            var stringContent = new StringContent(jsonBody ,Encoding.UTF8,"application/json");
+            return  await client.PostAsync("/board/ship", stringContent);
         }
     }
 }
