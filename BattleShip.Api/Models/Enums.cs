@@ -5,4 +5,10 @@ namespace BattleShip.Api.Models
         Horizontal,
         Vertical
     }
+
+    public enum GameStatus
+    {
+        Setup,
+        Playing
+    }
 }
