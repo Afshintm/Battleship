@@ -48,6 +48,10 @@ namespace Battleship.Integration.Tests
             // Assert
             response.EnsureSuccessStatusCode(); 
             Assert.Equal(ApplicationJson_ContentType, response.Content.Headers.ContentType.ToString());
+            
+            var apiResult = await response.ParseResponse();
+            
+            Assert.Equal(GameStatus.Setup.ToString() , apiResult.Response.status);
         }
 
         public async Task<HttpResponseMessage> CreateBoard()
