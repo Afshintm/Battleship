@@ -9,6 +9,7 @@ namespace BattleShip.Api.Models
     public enum GameStatus
     {
         Setup,
-        Playing
+        Playing,
+        NotStarted
     }
 }
