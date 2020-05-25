@@ -51,7 +51,9 @@ dotnet test ./Battleship.Integration.Tests
 
 ### Api Endpoints: ###
 
-There is a postman collection in the Doc folder of the repository, you can use to work with the api. 
+## There is a postman collection in the Doc folder, you can use to work with the api. ##
+
+
 
 In Summary:
 
