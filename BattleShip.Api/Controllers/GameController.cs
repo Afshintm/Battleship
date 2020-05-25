@@ -28,5 +28,12 @@ namespace BattleShip.Api.Controllers
             _gameTrackerService.SetStatus(newStatus);
             return await Get();
         }
+        [HttpPost]
+        [Route("attack")]
+        public async Task<IActionResult> Attach([FromBody] BoardPosition position)
+        {
+            var result = await _gameTrackerService.AttackAsync(position);
+            return Ok(result);
+        }
     }
 }

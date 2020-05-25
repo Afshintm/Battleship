@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using BattleShip.Api.ExceptionHandling;
 using BattleShip.Api.Extensions;
 using BattleShip.Api.Models;
@@ -14,6 +16,7 @@ namespace BattleShip.Api.Services
         dynamic AddShip(ShipViewModel shipViewModel);
         GameStatus Status { get; set; }
         void SetStatus(GameStatus newStatus);
+        Task<dynamic> AttackAsync(BoardPosition position);
         dynamic GetGameStatus();
         List<Ship> Ships { get; }
     }
@@ -129,6 +132,48 @@ namespace BattleShip.Api.Services
                 default:
                     throw new HttpStatusCodeException(HttpStatusCode.Forbidden,"invalid game status");
             }
+        }
+
+        public async Task<dynamic> AttackAsync(BoardPosition position)
+        {
+            
+            SetStatus(GameStatus.Playing);
+            
+            var attackResponse = await Task.Run(() =>
+            {
+                dynamic result = new ExpandoObject();
+                var allBoardPositions = Ships.SelectMany(s => s.BoardPositions).ToList();
+                var hitPosition = allBoardPositions.FirstOrDefault(i => i.X == position.X && i.Y == position.Y && i.Value != Guid.Empty);
+                if(hitPosition == null)
+                {
+                    result.Result = "miss";
+                }
+                else
+                {
+                    result.Result = "hit";
+
+                    var suncked = ClearBoardPosition(allBoardPositions , hitPosition);
+
+                    if (!string.IsNullOrEmpty(suncked))
+                        result.ShipStatus = suncked;
+                        
+                    if (allBoardPositions.All(i => i.Value == Guid.Empty))
+                    {
+                        result.GameStatus = "I Lost Game!";
+                        ResetTheGame();
+                    }
+                }
+                return result;
+            });
+            return attackResponse;
+        }
+
+        private string ClearBoardPosition(List<BoardPosition> boardPositions, BoardPosition foundPosition)
+        {
+            Guid id;
+            id = foundPosition.Value;
+            foundPosition.Value = Guid.Empty;
+            return boardPositions.Any(i => i.Value == id) ? null : "You Sunk my ship!";
         }
 
         
