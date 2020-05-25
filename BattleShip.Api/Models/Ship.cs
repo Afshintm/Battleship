@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using BattleShip.Api.Extensions;
 
 namespace BattleShip.Api.Models
 {
@@ -16,42 +17,53 @@ namespace BattleShip.Api.Models
         private Ship(BoardPosition position, int length, Alignment alignment)
         {
             Id = Guid.NewGuid();
-            StartingPosition = position;
+            BoardPositions = new List<BoardPosition>();
             Length = length;
             Alignment = alignment;
-            BoardPositions = new List<BoardPosition>();
-            BoardPositions.AddRange(SetupPositions(position, length, alignment));
+            var startPosition = new BoardPosition {X = position.X, Y = position.Y, Value = Id};
+            
+            //startPosition.BuildShipFrom(length, alignment);
+            // BoardPositions = new List<BoardPosition>
+            // {
+            //     new BoardPosition{X= position.X,Y = position.Y,Value = Id}
+            // };
+            //StartingPosition = position;
+            
+            
+            BoardPositions.AddRange(startPosition.BuildShipFrom(length, alignment));
         }
         public static Ship Create(ShipViewModel shipViewModel)
         {
-            return new Ship(shipViewModel.StartingPosition, shipViewModel.Length ,shipViewModel.Alignment);
+            return shipViewModel.Length <= 0 ? null 
+                : new Ship(shipViewModel.StartingPosition, shipViewModel.Length ,shipViewModel.Alignment);
         }
-        private IEnumerable<BoardPosition> SetupPositions(BoardPosition position, int length, Alignment alignment)
-        {
-            var boardPositions = new List<BoardPosition>();
-            for (var i = 0; i < length; i++)
-            {
-                if (alignment == Alignment.Horizontal)
-                {
-                    boardPositions.Add(new BoardPosition
-                    {
-                        X= position.X+i,
-                        Y= position.Y,
-                        Value = Id
-                    });
-                }
-                else 
-                {
-                    boardPositions.Add(new BoardPosition
-                    {
-                        X= position.X,
-                        Y= position.Y+i,
-                        Value = Id
-                    });
-                }
-            }
-            return boardPositions;
-        }
+        
+        // private  IEnumerable<BoardPosition> SetupPositions(BoardPosition position, int length, Alignment alignment)
+        // {
+        //     var boardPositions = new List<BoardPosition>();
+        //     for (var i = 0; i < length; i++)
+        //     {
+        //         if (alignment == Alignment.Horizontal)
+        //         {
+        //             boardPositions.Add(new BoardPosition
+        //             {
+        //                 X= position.X+i,
+        //                 Y= position.Y,
+        //                 Value = Id
+        //             });
+        //         }
+        //         else 
+        //         {
+        //             boardPositions.Add(new BoardPosition
+        //             {
+        //                 X= position.X,
+        //                 Y= position.Y+i,
+        //                 Value = Id
+        //             });
+        //         }
+        //     }
+        //     return boardPositions;
+        // }
     }
     
     public class ShipViewModel

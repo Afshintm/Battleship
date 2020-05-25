@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using BattleShip.Api.ExceptionHandling;
 using BattleShip.Api.Extensions;
@@ -52,12 +53,37 @@ namespace BattleShip.Api.Services
             if (!CanAddShip())
                 return null;
             
-            return null;
-        }
+            var ship = Ship.Create(shipViewModel);
 
+            var boardPositions = Ships.SelectMany(i => i.BoardPositions).ToList();
+            if (!ValidateShipPositions(boardPositions, ship.BoardPositions))
+                return null;
+
+            Ships.Add(ship);
+            
+            return ship.ToViewModel();
+        }
+        
+        public bool ValidateShipPositions (List<BoardPosition> source, List<BoardPosition> boardPositions)
+        {
+            foreach (var position in boardPositions)
+            {
+                if (source.Any(i=> i.X==position.X && i.Y ==position.Y))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is occupied!");
+                }
+                if (position.X>_dimensions||position.Y>_dimensions)
+                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is crossing the board!");
+            }
+            return true;
+        }
+        
         private bool CanAddShip()
         {
-            return false;
+            if (_status==GameStatus.NotStarted)
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict,$"No setup board is found. Please create the board then add ships.");
+            SetStatus(GameStatus.Setup);
+            return true;
         }
 
 
