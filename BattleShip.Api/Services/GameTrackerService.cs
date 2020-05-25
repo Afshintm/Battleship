@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
+using BattleShip.Api.ExceptionHandling;
 using BattleShip.Api.Extensions;
 using BattleShip.Api.Models;
 
@@ -9,7 +11,7 @@ namespace BattleShip.Api.Services
     {
         void CreateBoard(int dimensions = 10);
         void AddShip();
-        GameStatus Status { get; }
+        GameStatus Status { get; set; }
         void SetStatus(GameStatus status);
         dynamic GetGameStatus();
         List<Ship> Ships { get; }
@@ -19,7 +21,6 @@ namespace BattleShip.Api.Services
     {
         
         private int _dimensions = 10;
-        private GameStatus _status;
         public List<Ship> Ships { get; set; }
 
         public GameTrackerService()
@@ -27,11 +28,18 @@ namespace BattleShip.Api.Services
             _status = GameStatus.NotStarted;
         }
 
+        private GameStatus _status;
+        public GameStatus Status { 
+            get => _status;
+            set=> _status = value ; 
+        }
+
         public void CreateBoard(int dimensions = 10)
         {
             _dimensions = dimensions;
             if (_status == GameStatus.Playing)
-                throw new  ApplicationException("Cannot setup board while playing.");
+                throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"You cannot setup the board while game status is {_status.ToString()}.");
+
             
             if(Ships== null)
                 Ships = new List<Ship>();
@@ -44,7 +52,7 @@ namespace BattleShip.Api.Services
             throw new System.NotImplementedException();
         }
 
-        public GameStatus Status { get; }
+       
         public void SetStatus(GameStatus status)
         {
             throw new System.NotImplementedException();

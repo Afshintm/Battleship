@@ -1,5 +1,7 @@
 using System.Dynamic;
+using BattleShip.Api.ExceptionHandling;
 using BattleShip.Api.Services;
+using Microsoft.AspNetCore.Builder;
 
 namespace BattleShip.Api.Extensions
 {
@@ -13,6 +15,10 @@ namespace BattleShip.Api.Extensions
             if(gameTrackerService.Ships!=null)
                 result.ships = gameTrackerService.Ships;
             return result;
+        }
+        public static void ConfigureCustomExceptionMiddleware(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<CustomExceptionMiddleware>();
         }
     }
 }
