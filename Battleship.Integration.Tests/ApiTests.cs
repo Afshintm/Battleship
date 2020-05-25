@@ -16,6 +16,8 @@ namespace Battleship.Integration.Tests
         public const string Get_Game_Url = "/game";
         public const string ApplicationJson_ContentType = "application/json; charset=utf-8";
         public const string Create_Board_Url = "/board/create";
+        public const string Add_Ship_URL = "/board/ship";
+        public const string Set_Game_Status = "/game/status";
 
         private readonly ShipViewModel _stubShipViewModel;
         public ApiTests(WebApplicationFactory<Startup> factory)
@@ -48,8 +50,7 @@ namespace Battleship.Integration.Tests
             response.EnsureSuccessStatusCode(); 
             Assert.Equal(ApplicationJson_ContentType, response.Content.Headers.ContentType.ToString());
             var apiResult = await response.ParseResponse();
-            if (url == Get_Board_Url)
-                Assert.Equal(GameStatus.NotStarted.ToString() , apiResult.Response.status);
+            Assert.Equal(GameStatus.NotStarted.ToString() , apiResult.Response.status);
         }
 
         [Fact]
@@ -64,6 +65,8 @@ namespace Battleship.Integration.Tests
             var apiResult = await response.ParseResponse();
             
             Assert.Equal(GameStatus.Setup.ToString() , apiResult.Response.status);
+            Assert.NotNull(apiResult.Response.ships);
+            Assert.Equal(0,apiResult.Response.ships.Count);
         }
 
         public async Task<HttpResponseMessage> CreateBoard()
@@ -85,6 +88,26 @@ namespace Battleship.Integration.Tests
             Assert.Equal(ApplicationJson_ContentType, response.Content.Headers.ContentType.ToString());
             var parsedResponse = await response.ParseResponse();
             Assert.NotNull(parsedResponse.Response);
+            
+            Assert.Equal(GameStatus.Setup.ToString() , parsedResponse.Response.status);
+            
+        }
+        [Fact]
+        public async Task Set_GameStatus_To_Setup_Should_Create_The_Board()
+        {
+            var client = _factory.CreateClient();
+
+            var response = await client.PutAsync(Set_Game_Status+"/setup", null);
+
+            // Assert
+            response.EnsureSuccessStatusCode(); 
+            
+            Assert.Equal(ApplicationJson_ContentType, response.Content.Headers.ContentType.ToString());
+            var apiResult = await response.ParseResponse();
+            Assert.Equal(GameStatus.Setup.ToString() , apiResult.Response.status);
+            Assert.NotNull(apiResult.Response.ships);
+            Assert.Equal(0,apiResult.Response.ships.Count);
+            
         }
 
         private async Task<HttpResponseMessage> AddStubedShip()
@@ -92,7 +115,7 @@ namespace Battleship.Integration.Tests
             var client = _factory.CreateClient();
             var jsonBody = JsonConvert.SerializeObject(_stubShipViewModel);
             var stringContent = new StringContent(jsonBody ,Encoding.UTF8,"application/json");
-            return  await client.PostAsync("/board/ship", stringContent);
+            return  await client.PostAsync(Add_Ship_URL, stringContent);
         }
     }
 }

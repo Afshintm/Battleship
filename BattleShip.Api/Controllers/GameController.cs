@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using BattleShip.Api.Models;
 using BattleShip.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,14 @@ namespace BattleShip.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return await Task.FromResult(Ok(2));
+            return await Task.FromResult(Ok(_gameTrackerService.GetGameStatus()));
+        }
+        [HttpPut]
+        [Route("status/{newStatus}")]
+        public async Task<IActionResult> SetStatus([FromRoute]GameStatus newStatus)
+        {
+            _gameTrackerService.SetStatus(newStatus);
+            return await Get();
         }
     }
 }
