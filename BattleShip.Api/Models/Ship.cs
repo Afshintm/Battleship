@@ -11,7 +11,6 @@ namespace BattleShip.Api.Models
         public int Length { get; private set; }
         public  Alignment Alignment { get; private set; }
         
-        // public  BoardPosition StartingPosition { get; private set; }
         public List<BoardPosition> BoardPositions { get; private set; }
         
         private Ship(BoardPosition position, int length, Alignment alignment)
@@ -37,33 +36,6 @@ namespace BattleShip.Api.Models
             return shipViewModel.Length <= 0 ? null 
                 : new Ship(shipViewModel.StartingPosition, shipViewModel.Length ,shipViewModel.Alignment);
         }
-        
-        // private  IEnumerable<BoardPosition> SetupPositions(BoardPosition position, int length, Alignment alignment)
-        // {
-        //     var boardPositions = new List<BoardPosition>();
-        //     for (var i = 0; i < length; i++)
-        //     {
-        //         if (alignment == Alignment.Horizontal)
-        //         {
-        //             boardPositions.Add(new BoardPosition
-        //             {
-        //                 X= position.X+i,
-        //                 Y= position.Y,
-        //                 Value = Id
-        //             });
-        //         }
-        //         else 
-        //         {
-        //             boardPositions.Add(new BoardPosition
-        //             {
-        //                 X= position.X,
-        //                 Y= position.Y+i,
-        //                 Value = Id
-        //             });
-        //         }
-        //     }
-        //     return boardPositions;
-        // }
     }
     
     public class ShipViewModel

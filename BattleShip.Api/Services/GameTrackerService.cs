@@ -13,7 +13,7 @@ namespace BattleShip.Api.Services
     public interface IGameTrackerService
     {
         void CreateBoard(int dimensions = 10);
-        dynamic AddShip(ShipViewModel shipViewModel);
+        Ship AddShip(ShipViewModel shipViewModel);
         GameStatus Status { get; set; }
         void SetStatus(GameStatus newStatus);
         dynamic GetGameStatus();
@@ -51,7 +51,7 @@ namespace BattleShip.Api.Services
             _status = GameStatus.Setup;
         }
 
-        public dynamic AddShip(ShipViewModel shipViewModel)
+        public Ship AddShip(ShipViewModel shipViewModel)
         {
             if (!CanAddShip())
                 return null;
@@ -66,7 +66,7 @@ namespace BattleShip.Api.Services
 
             Ships.Add(ship);
             
-            return ship.ToViewModel();
+            return ship;
         }
 
         public bool ValidateIfShipCanFitIn(Ship ship)

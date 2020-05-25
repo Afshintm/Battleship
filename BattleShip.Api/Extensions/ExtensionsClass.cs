@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using BattleShip.Api.ExceptionHandling;
@@ -60,31 +59,6 @@ namespace BattleShip.Api.Extensions
             }
             return boardPositions;
         }
-        // private  IEnumerable<BoardPosition> SetupPositions(BoardPosition position, int length, Alignment alignment)
-        // {
-        //     var boardPositions = new List<BoardPosition>();
-        //     for (var i = 0; i < length; i++)
-        //     {
-        //         if (alignment == Alignment.Horizontal)
-        //         {
-        //             boardPositions.Add(new BoardPosition
-        //             {
-        //                 X= position.X+i,
-        //                 Y= position.Y,
-        //                 Value = Id
-        //             });
-        //         }
-        //         else 
-        //         {
-        //             boardPositions.Add(new BoardPosition
-        //             {
-        //                 X= position.X,
-        //                 Y= position.Y+i,
-        //                 Value = Id
-        //             });
-        //         }
-        //     }
-        //     return boardPositions;
-        // }
+        
     }
 }
