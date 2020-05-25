@@ -33,26 +33,6 @@ namespace BattleShip.Unit.Tests
             }
         }
 
-        [Fact]
-        public void ValidateShipPositions_Should_Not_Allow_Crossing_Ships()
-        {
-            var source = new List<BoardPosition>
-            {
-                new BoardPosition{X=3,Y=3,Value = Guid.Empty},
-                new BoardPosition{X=3,Y=4,Value = Guid.Empty},
-                new BoardPosition{X=3,Y=5,Value = Guid.Empty},
-            };
-            var boardPositions = new List<BoardPosition>
-            {
-                new BoardPosition{X=3,Y=3,Value = Guid.Empty},
-                new BoardPosition{X=4,Y=4,Value = Guid.Empty},
-                new BoardPosition{X=5,Y=5,Value = Guid.Empty},
-            };
-        }
-
-        [Fact]
-        public void ValidateShipPositions_Should_Not_Allow_Crossing_Board_Border()
-        {
-        }
+        
     }
 }

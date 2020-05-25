@@ -17,7 +17,7 @@ namespace BattleShip.Api.Services
         GameStatus Status { get; set; }
         void SetStatus(GameStatus newStatus);
         dynamic GetGameStatus();
-        List<Ship> Ships { get; }
+        List<Ship> Ships { get; set; }
         Task<dynamic> AttackAsync(BoardPosition position);
     }
 
@@ -57,29 +57,45 @@ namespace BattleShip.Api.Services
                 return null;
             
             var ship = Ship.Create(shipViewModel);
-
-            var boardPositions = Ships.SelectMany(i => i.BoardPositions).ToList();
-            if (!ValidateShipPositions(boardPositions, ship.BoardPositions))
+            
+            if (!ValidateIfShipCanFitIn(ship))
+                return null;
+            
+            if (!ValidateIfShipNotCrossingOtherShips(ship))
                 return null;
 
             Ships.Add(ship);
             
             return ship.ToViewModel();
         }
-        
-        public bool ValidateShipPositions (List<BoardPosition> source, List<BoardPosition> boardPositions)
+
+        public bool ValidateIfShipCanFitIn(Ship ship)
         {
-            foreach (var position in boardPositions)
+            if (ship?.BoardPositions == null) return true;
+            
+            foreach (var position in ship.BoardPositions.Where(position => position.X>_dimensions||position.Y>_dimensions))
             {
-                if (source.Any(i=> i.X==position.X && i.Y ==position.Y))
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is occupied!");
-                }
-                if (position.X>_dimensions||position.Y>_dimensions)
-                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is crossing the board!");
+                throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is crossing the board!");
             }
             return true;
         }
+
+        public bool ValidateIfShipNotCrossingOtherShips(Ship ship)
+        {
+            if (ship?.BoardPositions == null) return true;
+            
+            var gameBoardPositions = Ships.SelectMany(i => i.BoardPositions).ToList();
+            
+            foreach (var position in ship.BoardPositions)
+            {
+                if (gameBoardPositions.Any(i=> i.X==position.X && i.Y ==position.Y))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is occupied!");
+                }
+            }
+            return true;
+        }
+        
         
         private bool CanAddShip()
         {
