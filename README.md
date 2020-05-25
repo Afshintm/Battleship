@@ -22,6 +22,12 @@ You will have to install .net core 3 runtime which can be downloaded from
 
 ## To build the project you need to to the following: ##
 
+## mac os ##
+
+run ./run.sh from the root of the repository. 
+
+## Windows or any command line/terminal ##
+
 1- clone the repo to your local environment and cd to repository directory
 
 2- dotnet build BattleShip.sln
