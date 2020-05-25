@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using BattleShip.Api.Models;
 using Xunit;
 
@@ -30,5 +32,7 @@ namespace BattleShip.Unit.Tests
                 );
             }
         }
+
+        
     }
 }

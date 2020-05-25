@@ -13,12 +13,12 @@ namespace BattleShip.Api.Services
     public interface IGameTrackerService
     {
         void CreateBoard(int dimensions = 10);
-        dynamic AddShip(ShipViewModel shipViewModel);
+        Ship AddShip(ShipViewModel shipViewModel);
         GameStatus Status { get; set; }
         void SetStatus(GameStatus newStatus);
-        Task<dynamic> AttackAsync(BoardPosition position);
         dynamic GetGameStatus();
-        List<Ship> Ships { get; }
+        List<Ship> Ships { get; set; }
+        Task<dynamic> AttackAsync(BoardPosition position);
     }
 
     public class GameTrackerService: IGameTrackerService
@@ -51,44 +51,59 @@ namespace BattleShip.Api.Services
             _status = GameStatus.Setup;
         }
 
-        public dynamic AddShip(ShipViewModel shipViewModel)
+        public Ship AddShip(ShipViewModel shipViewModel)
         {
             if (!CanAddShip())
                 return null;
             
             var ship = Ship.Create(shipViewModel);
-
-            var boardPositions = Ships.SelectMany(i => i.BoardPositions).ToList();
-            if (!ValidateShipPositions(boardPositions, ship.BoardPositions))
+            
+            if (!ValidateIfShipCanFitIn(ship))
+                return null;
+            
+            if (!ValidateIfShipNotCrossingOtherShips(ship))
                 return null;
 
             Ships.Add(ship);
             
-            return ship.ToViewModel();
+            return ship;
         }
-        public bool ValidateShipPositions (List<BoardPosition> source, List<BoardPosition> boardPositions)
+
+        public bool ValidateIfShipCanFitIn(Ship ship)
         {
-            foreach (var position in boardPositions)
+            if (ship?.BoardPositions == null) return true;
+            
+            foreach (var position in ship.BoardPositions.Where(position => position.X>_dimensions||position.Y>_dimensions))
             {
-                if (source.Any(i=> i.X==position.X && i.Y ==position.Y))
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is occupied!");
-                }
-                if (position.X>_dimensions||position.Y>_dimensions)
-                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is crossing the board!");
+                throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is crossing the board!");
             }
             return true;
         }
+
+        public bool ValidateIfShipNotCrossingOtherShips(Ship ship)
+        {
+            if (ship?.BoardPositions == null) return true;
+            
+            var gameBoardPositions = Ships.SelectMany(i => i.BoardPositions).ToList();
+            
+            foreach (var position in ship.BoardPositions)
+            {
+                if (gameBoardPositions.Any(i=> i.X==position.X && i.Y ==position.Y))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Position X:{position.X}, Y:{position.Y} is occupied!");
+                }
+            }
+            return true;
+        }
+        
+        
         private bool CanAddShip()
         {
             if (_status==GameStatus.NotStarted)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict,$"No setup board is found. Please create the board then add ships.");
-            
-            // Validate to see if addition is allowed 
             SetStatus(GameStatus.Setup);
             return true;
         }
-
 
 
         public void SetStatus(GameStatus newStatus)

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Dynamic;
 using BattleShip.Api.ExceptionHandling;
 using BattleShip.Api.Models;
@@ -21,17 +22,34 @@ namespace BattleShip.Api.Extensions
         {
             app.UseMiddleware<CustomExceptionMiddleware>();
         }
-        public static dynamic ToViewModel(this Ship ship)
+
+        public static List<BoardPosition> BuildShipFrom(this BoardPosition startingPosition,int length, Alignment alignment)
         {
-            if (ship == null) return null;
-            dynamic result = new ExpandoObject();
-            result.alignment = ship.Alignment.ToString();
-            result.length = ship.Length;
-            result.startingPosition = new
+            if (startingPosition == null) return null;
+            var boardPositions = new List<BoardPosition>{startingPosition};
+            for (var i = 1; i < length; i++)
             {
-                ship.StartingPosition.X, ship.StartingPosition.Y
-            };
-            return result;
+                if (alignment == Alignment.Horizontal)
+                {
+                    boardPositions.Add(new BoardPosition
+                    {
+                        X= startingPosition.X+i,
+                        Y= startingPosition.Y,
+                        Value = startingPosition.Value
+                    });
+                }
+                else 
+                {
+                    boardPositions.Add(new BoardPosition
+                    {
+                        X= startingPosition.X,
+                        Y= startingPosition.Y+i,
+                        Value = startingPosition.Value
+                    });
+                }
+            }
+            return boardPositions;
         }
+        
     }
 }

@@ -2,6 +2,7 @@ using System;
 using BattleShip.Api.ExceptionHandling;
 using BattleShip.Api.Models;
 using BattleShip.Api.Services;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Xunit;
 
 namespace BattleShip.Unit.Tests
@@ -35,6 +36,51 @@ namespace BattleShip.Unit.Tests
                 act();
                 Assert.Equal(to, tracker.Status);
             }
+        }
+        
+        [Fact]
+        public void ValidateShipPositions_Should_Throw_Exception_When_Ships_Position_Cross()
+        {
+            var tracker = new GameTrackerService();
+            tracker.CreateBoard();
+            
+            
+            tracker.Ships.Add(
+                Ship.Create( new ShipViewModel
+            {
+                StartingPosition = new BoardPosition {X = 3, Y = 3},
+                Alignment = Alignment.Horizontal,
+                Length = 3
+            }));
+            
+            var newShip = Ship.Create(new ShipViewModel
+            {
+                StartingPosition = new BoardPosition {X = 4, Y = 1},
+                Alignment = Alignment.Vertical,
+                Length = 4
+            });
+            Action act = ()=> tracker.ValidateIfShipNotCrossingOtherShips(newShip);
+            Assert.Throws<HttpStatusCodeException>(act);
+        }
+
+        [Fact]
+        public void ValidateIfShipCanFitIn_Should_Throw_Exception_When_Ship_Position_Cross_Border()
+        {
+        
+            //Arrange
+            var shipViewModel = new ShipViewModel
+            {
+                StartingPosition = new BoardPosition {X = 3, Y = 3},
+                Alignment = Alignment.Horizontal,
+                Length = 10
+            };
+            var ship = Ship.Create(shipViewModel); 
+            
+            var tracker = new GameTrackerService();
+            tracker.Status = GameStatus.Setup;
+            
+           Action act = () => tracker.ValidateIfShipCanFitIn(ship);
+           Assert.Throws<HttpStatusCodeException>(act);
         }
     }
 }
