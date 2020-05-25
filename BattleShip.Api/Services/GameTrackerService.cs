@@ -12,7 +12,7 @@ namespace BattleShip.Api.Services
         void CreateBoard(int dimensions = 10);
         void AddShip();
         GameStatus Status { get; set; }
-        void SetStatus(GameStatus status);
+        void SetStatus(GameStatus newStatus);
         dynamic GetGameStatus();
         List<Ship> Ships { get; }
     }
@@ -21,17 +21,17 @@ namespace BattleShip.Api.Services
     {
         
         private int _dimensions = 10;
+        
+        private GameStatus _status;
+        public GameStatus Status { 
+            get => _status;
+            set=> _status = value ; 
+        }
         public List<Ship> Ships { get; set; }
 
         public GameTrackerService()
         {
             _status = GameStatus.NotStarted;
-        }
-
-        private GameStatus _status;
-        public GameStatus Status { 
-            get => _status;
-            set=> _status = value ; 
         }
 
         public void CreateBoard(int dimensions = 10)
@@ -53,11 +53,55 @@ namespace BattleShip.Api.Services
         }
 
        
-        public void SetStatus(GameStatus status)
+        public void SetStatus(GameStatus newStatus)
         {
-            throw new System.NotImplementedException();
+            switch (newStatus)
+            {
+                case GameStatus.Playing:
+                    StartPlaying();
+                    break;
+                case GameStatus.Setup:
+                    SetupGame();
+                    break;
+                case GameStatus.NotStarted:
+                    ResetTheGame();
+                    break;
+            }
         }
 
+        public void StartPlaying()
+        {
+            if(_status == GameStatus.NotStarted)
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict,"No setup board is found. Please create the board and add ships.");
+            if (Ships.Count <= 0)
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict,"No Ship is added yet. Please add ships.");
+
+            _status = GameStatus.Playing;
+        }
+       
+        void SetupGame()
+        {
+            switch (_status)
+            {
+                case GameStatus.NotStarted:
+                    CreateBoard();
+                    break;
+                case GameStatus.Playing:
+                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,$"Cannot move to status {GameStatus.Setup}, from current status {_status.ToString()}.");
+                case GameStatus.Setup:
+                    _status = GameStatus.Setup;
+                    break;
+                default:
+                    throw new HttpStatusCodeException(HttpStatusCode.Forbidden,"invalid game status");
+            }
+        }
+
+        
+        private void ResetTheGame()
+        {
+            Ships = null;
+            _status = GameStatus.NotStarted;
+        }
         public dynamic GetGameStatus()
         {
             return this.ToViewModel();
