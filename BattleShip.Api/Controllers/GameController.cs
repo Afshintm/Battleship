@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using BattleShip.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+
 namespace BattleShip.Api.Controllers
 {
     [ApiController]
+    [Produces("application/json")]
     [Route("[controller]")]
     public class GameController: ControllerBase
     {
@@ -16,7 +18,7 @@ namespace BattleShip.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return await Task.FromResult(Ok("Game"));
+            return await Task.FromResult(Ok(2));
         }
     }
 }

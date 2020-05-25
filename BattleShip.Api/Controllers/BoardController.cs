@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BattleShip.Api.Controllers
 {
     [ApiController]
+    [Produces("application/json")]
     [Route("[controller]")]
     public class BoardController: ControllerBase
     {
