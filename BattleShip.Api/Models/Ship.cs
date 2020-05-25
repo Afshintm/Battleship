@@ -11,7 +11,7 @@ namespace BattleShip.Api.Models
         public int Length { get; private set; }
         public  Alignment Alignment { get; private set; }
         
-        public  BoardPosition StartingPosition { get; private set; }
+        // public  BoardPosition StartingPosition { get; private set; }
         public List<BoardPosition> BoardPositions { get; private set; }
         
         private Ship(BoardPosition position, int length, Alignment alignment)
