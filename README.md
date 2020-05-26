@@ -24,7 +24,7 @@ You will have to install .net core 3 runtime which can be downloaded from
 
 ## mac os ##
 
-run ./run.sh from the root of the repository. 
+run ./run.sh from the root of the repository for interactive menu. 
 
 ## Windows or any command line/terminal ##
 
