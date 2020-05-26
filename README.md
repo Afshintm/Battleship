@@ -89,3 +89,8 @@ Put   `https://localhost:5071/game/status/Playing`
 Put   `https://localhost:5071/game/status/Setup`
 
 
+### See it in action: following link is deploted to AWS Ecs ###
+
+`http://battleshipapi-31020185.ap-southeast-2.elb.amazonaws.com/game`
+
+

@@ -2,11 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.0</TargetFramework>
+        <UserSecretsId>7ec3b333-c2fe-4e65-bac5-b8af5419429e</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     </ItemGroup>
 
 

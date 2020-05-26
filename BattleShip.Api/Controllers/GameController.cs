@@ -16,6 +16,14 @@ namespace BattleShip.Api.Controllers
         {
             _gameTrackerService = gameTrackerService;
         }
+
+        [HttpGet]
+        [Route("~/")]
+        public async Task<IActionResult> HealthCheckApi()
+        {
+            return Redirect("~/game");
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
