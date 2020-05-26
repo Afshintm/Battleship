@@ -19,7 +19,7 @@ namespace BattleShip.Api.Controllers
 
         [HttpGet]
         [Route("~/")]
-        public async Task<IActionResult> HealthCheckApi()
+        public IActionResult HealthCheckApi()
         {
             return Redirect("~/game");
         }

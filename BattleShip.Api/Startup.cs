@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace BattleShip.Api
 {
@@ -24,8 +25,11 @@ namespace BattleShip.Api
                 {
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                     options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-                }
-                );
+                });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Battleship.Api", Version = "v1" });
+            });
             services.AddSingleton<IGameTrackerService, GameTrackerService>();
         }
 
@@ -37,6 +41,12 @@ namespace BattleShip.Api
                 app.UseDeveloperExceptionPage();
             }
             app.ConfigureCustomExceptionMiddleware();
+            
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Battleship Game API V1");
+            });
 
             app.UseHttpsRedirection();
 
