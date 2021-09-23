@@ -46,7 +46,6 @@ namespace SampleTests.Components.Tests
                         .WriteTo.Console();
                     Log.Logger = loggerConfiguration.CreateLogger();
 
-                    // TODO: temporary, this PR will fix this: https://github.com/Abcd-Technology/tax-compliance-service-api/pull/1444
                     Environment.SetEnvironmentVariable("DomainEventsService__UseQueue", useSqs.ToString().ToLower());
 
                     var webHostBuilder = WebHost.CreateDefaultBuilder()
