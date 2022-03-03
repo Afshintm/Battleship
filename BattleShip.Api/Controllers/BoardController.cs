@@ -9,7 +9,7 @@ namespace BattleShip.Api.Controllers
     [ApiController]
     [Produces("application/json")]
     [Route("[controller]")]
-    public class BoardController: ControllerBase
+    public class BoardController : ControllerBase
     {
         private readonly IGameTrackerService _gameTrackerService;
         public BoardController(IGameTrackerService gameTrackerService)
@@ -24,7 +24,7 @@ namespace BattleShip.Api.Controllers
         }
         [HttpPost]
         [Route("create/{dimensions?}")]
-        public async Task<IActionResult> CreateAsync(int dimensions=10)
+        public async Task<IActionResult> CreateAsync(int dimensions = 10)
         {
             _gameTrackerService.CreateBoard(dimensions);
             var response = await Task.FromResult(Created(new Uri("https://localhost:5071/board"), _gameTrackerService.GetGameStatus()));
@@ -33,11 +33,12 @@ namespace BattleShip.Api.Controllers
 
         [HttpPost]
         [Route("ship")]
-        public async Task<IActionResult> Ship([FromBody]ShipViewModel ship)
+        public async Task<IActionResult> Ship([FromBody] ShipViewModel ship)
         {
-            var createdShip =_gameTrackerService.AddShip(ship);
+            var createdShip = _gameTrackerService.AddShip(ship);
             var response = await Task.FromResult(Created(new Uri("https://localhost:5071/board"), createdShip));
             return response;
         }
+        //uguguyguyg
     }
 }
