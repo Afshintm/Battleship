@@ -1,17 +1,3 @@
-//   "Serilog": {
-//     "MinimumLevel": {
-//       "Default": "Information",
-//       "Override": {
-//         "Microsoft": "Warning",
-//         "System": "Warning"
-//       }
-//     },
-//     "WriteTo": [
-//       {
-//         "Name": "Console"
-//       }
-//     ]
-//   },
 
 
 using System;
